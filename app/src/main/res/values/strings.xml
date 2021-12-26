@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Note App</string>
+    <string name="all">All</string>
+    <string name="HomeStuff">Home</string>
+    <string name="work">Work</string>
+    <string name="title">Title</string>
+    <string name="write_the_note_here">Write the note here</string>
+    <string name="category">Category</string>
+</resources>
