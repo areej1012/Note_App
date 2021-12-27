@@ -13,7 +13,7 @@ import com.example.noteapp.databinding.ActivityNoteBinding
 class NoteActivity : AppCompatActivity() {
     lateinit var binding: ActivityNoteBinding
     private val dbHelper by lazy { DatabaseHelper(applicationContext) }
-    var category = ""
+    var category = "All"
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityNoteBinding.inflate(layoutInflater)
@@ -53,25 +53,25 @@ class NoteActivity : AppCompatActivity() {
         val title = binding.tvTitle.text.toString()
         val content = binding.tvContent.text.toString()
         if (title.isEmpty() && content.isEmpty()) {
-            startActivity(Intent(this, MainActivity::class.java))
+            finish()
         } else if (title.isEmpty()) {
             val newNote = Note(
-                "", content, category
+                null,"", content, category
             )
                dbHelper.saveData(newNote)
-            startActivity(Intent(this, MainActivity::class.java))
+            finish()
         } else if (content.isEmpty()) {
             val newNote = Note(
-                title, "", category
+                null,title, "", category
             )
              dbHelper.saveData(newNote)
-            startActivity(Intent(this, MainActivity::class.java))
+            finish()
         } else {
             val newNote = Note(
-                title, content, category
+               null, title, content, category
             )
               dbHelper.saveData(newNote)
-            startActivity(Intent(this, MainActivity::class.java))
+            finish()
 
         }
 

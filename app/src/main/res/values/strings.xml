@@ -6,4 +6,10 @@
     <string name="title">Title</string>
     <string name="write_the_note_here">Write the note here</string>
     <string name="category">Category</string>
+    <string name="take_note">Never forget anything again, take notes</string>
+    <string-array name="catgory">
+        <item>All</item>
+        <item>Home</item>
+        <item>Work</item>
+    </string-array>
 </resources>

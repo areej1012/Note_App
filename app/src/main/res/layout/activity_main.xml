@@ -3,9 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:background="#f8f7f5"
     android:layout_height="match_parent"
+    android:background="#f8f7f5"
     tools:context=".MainActivity">
+
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/t"
         android:layout_width="0dp"
@@ -38,9 +39,11 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
         android:background="@drawable/round_button_change"
+
+        android:foregroundTint="#FFFFFF"
+        android:onClick="getAllCategory"
         android:text="@string/all"
         android:textColor="#FFFFFF"
-        android:onClick="getAllCategory"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/t" />
 
@@ -51,9 +54,9 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
         android:background="@drawable/round_button"
+        android:onClick="getHomeCategory"
         android:text="@string/HomeStuff"
         android:textColor="#9C9797"
-        android:onClick="getWorkHome"
         app:layout_constraintEnd_toStartOf="@+id/btAll"
         app:layout_constraintTop_toBottomOf="@+id/t" />
 
@@ -64,9 +67,9 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
         android:background="@drawable/round_button"
+        android:onClick="getWorkCategory"
         android:text="@string/work"
         android:textColor="#9C9797"
-        android:onClick="getWorkCategory"
         app:layout_constraintEnd_toStartOf="@+id/btHome"
         app:layout_constraintTop_toBottomOf="@+id/t" />
 
@@ -84,17 +87,20 @@
         app:layout_constraintTop_toBottomOf="@+id/btHome"
         app:layout_constraintVertical_bias="0.028" />
 
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/floatingActionButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="40dp"
         android:layout_marginEnd="32dp"
+        android:layout_marginBottom="40dp"
+
         android:clickable="true"
+        android:focusable="true"
         android:onClick="openNote"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/ic_baseline_add_24"
-        android:backgroundTint="@color/blue_001"
-        android:focusable="true" />
+        app:srcCompat="@drawable/ic_baseline_add_24" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

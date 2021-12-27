@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Widget.App.ButtonStyle"
+        parent="Widget.MaterialComponents.Button">
+        <item name="materialThemeOverlay">@style/blue</item>
+    </style>
+
+    <style name="gray">
+        <item name="colorPrimary">@color/gray</item>
+    </style>
+    <style name="blue">
+        <item name="colorPrimary">@color/blue</item>
+    </style>
+</resources>

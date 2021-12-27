@@ -39,6 +39,7 @@
         android:layout_marginEnd="16dp"
         android:background="@drawable/round_button_change"
         android:text="@string/all"
+        app:backgroundTint ="@color/blue_001"
         android:textColor="#FFFFFF"
         android:onClick="getAllCategory"
         app:layout_constraintEnd_toEndOf="parent"
@@ -53,7 +54,7 @@
         android:background="@drawable/round_button"
         android:text="@string/HomeStuff"
         android:textColor="#9C9797"
-        android:onClick="getWorkHome"
+        android:onClick="getHomeCategory"
         app:layout_constraintEnd_toStartOf="@+id/btAll"
         app:layout_constraintTop_toBottomOf="@+id/t" />
 
@@ -82,7 +83,21 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btHome"
+        android:visibility="gone"
         app:layout_constraintVertical_bias="0.028" />
+
+    <ImageView
+        android:id="@+id/imageWrite"
+        android:layout_width="260dp"
+        android:layout_height="170dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="120dp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.495"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btWork"
+        app:srcCompat="@drawable/write" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/floatingActionButton"
@@ -95,6 +110,19 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="@drawable/ic_baseline_add_24"
-
+        android:foreground= "@drawable/fab_style"
         android:focusable="true" />
+
+    <TextView
+        android:id="@+id/tvTakeNote"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:text="@string/take_note"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageWrite" />
 </androidx.constraintlayout.widget.ConstraintLayout>
