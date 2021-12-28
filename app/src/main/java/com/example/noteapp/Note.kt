@@ -1,4 +1,6 @@
 package com.example.noteapp
 
-class Note(var pk : Int? ,var Title : String, var Content : String, var Category: String) {
+import java.io.Serializable
+
+class Note(var pk : Int? ,var Title : String, var Content : String, var Category: String) : Serializable {
 }

@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Adapter
 import android.widget.GridView
+import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.GridLayoutManager
@@ -25,12 +26,13 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         val toolbar = binding.toolbar as Toolbar
         setSupportActionBar(toolbar)
+        title = ""
 
         notesList = arrayListOf()
-        adapter = NoteRecycleView(notesList)
+        adapter = NoteRecycleView(notesList , this)
         binding.rv.adapter = adapter
         binding.rv.layoutManager = GridLayoutManager(this , 2)
-
+        readAllCategory()
 
 
     }
@@ -38,7 +40,10 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         readAllCategory()
+        changeColorAllButton()
     }
+
+
     fun openNote(view: View) {
         startActivity(Intent(this , NoteActivity::class.java))
     }
@@ -56,14 +61,16 @@ class MainActivity : AppCompatActivity() {
         else
             updateState(false)
 
-        binding.btAll.background = resources.getDrawable(R.drawable.round_button)
+
+        binding.btAll.backgroundTintList = ColorStateList.valueOf(Color.rgb(235, 235, 235))
         binding.btAll.setTextColor(Color.rgb(156,151,151))
-        binding.btHome.background = resources.getDrawable(R.drawable.round_button)
+        binding.btHome.backgroundTintList = ColorStateList.valueOf(Color.rgb(235, 235, 235))
         binding.btHome.setTextColor(Color.rgb(156,151,151))
-        binding.btWork.background = resources.getDrawable(R.drawable.round_button_change)
+        binding.btWork.backgroundTintList = ColorStateList.valueOf(Color.rgb(20, 159, 254))
         binding.btWork.setTextColor(Color.WHITE)
 
     }
+
     fun getHomeCategory(view: View) {
         val homeList = arrayListOf<Note>()
         for (note in notesList){
@@ -77,23 +84,18 @@ class MainActivity : AppCompatActivity() {
         else
             updateState(false)
 
-        binding.btAll.background = resources.getDrawable(R.drawable.round_button)
-
+        binding.btAll.backgroundTintList = ColorStateList.valueOf(Color.rgb(235, 235, 235))
         binding.btAll.setTextColor(Color.rgb(156,151,151))
-        binding.btHome.background = resources.getDrawable(R.drawable.round_button_change)
+        binding.btHome.backgroundTintList = ColorStateList.valueOf(Color.rgb(20, 159, 254))
         binding.btHome.setTextColor(Color.WHITE)
-        binding.btWork.background = resources.getDrawable(R.drawable.round_button)
+        binding.btWork.backgroundTintList = ColorStateList.valueOf(Color.rgb(235, 235, 235))
         binding.btWork.setTextColor(Color.rgb(156,151,151))
     }
+
+
     fun getAllCategory(view: View) {
         readAllCategory()
-
-        binding.btAll.background = resources.getDrawable(R.drawable.round_button_change)
-        binding.btAll.setTextColor(Color.WHITE)
-        binding.btHome.background = resources.getDrawable(R.drawable.round_button)
-        binding.btHome.setTextColor(Color.rgb(156,151,151))
-        binding.btWork.background = resources.getDrawable(R.drawable.round_button)
-        binding.btWork.setTextColor(Color.rgb(156,151,151))
+        changeColorAllButton()
 
     }
 
@@ -117,6 +119,17 @@ class MainActivity : AppCompatActivity() {
            binding.imageWrite?.isVisible = true
             binding.tvTakeNote?.isVisible = true
         }
+
+
+    }
+
+    private fun changeColorAllButton() {
+        binding.btAll.backgroundTintList = ColorStateList.valueOf(Color.rgb(20, 159, 254))
+        binding.btAll.setTextColor(Color.WHITE)
+        binding.btHome.backgroundTintList = ColorStateList.valueOf(Color.rgb(235, 235, 235))
+        binding.btHome.setTextColor(Color.rgb(156,151,151))
+        binding.btWork.backgroundTintList = ColorStateList.valueOf(Color.rgb(235, 235, 235))
+        binding.btWork.setTextColor(Color.rgb(156,151,151))
     }
 
 }

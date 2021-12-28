@@ -23,8 +23,7 @@
             android:minHeight="?attr/actionBarSize"
             android:textAlignment="center"
             android:theme="?attr/actionBarTheme"
-            app:logo="@drawable/ic_note_logo"
-            app:title="Notes"
+            app:logo="@drawable/newlogo"
             app:titleMargin="10dp"
             app:titleTextColor="#1875d1"
             tools:layout_editor_absoluteX="0dp"
@@ -39,7 +38,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
         android:background="@drawable/round_button_change"
-
+        android:backgroundTint="@color/blue_001"
         android:foregroundTint="#FFFFFF"
         android:onClick="getAllCategory"
         android:text="@string/all"

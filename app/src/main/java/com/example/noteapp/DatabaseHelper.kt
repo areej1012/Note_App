@@ -43,5 +43,15 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "notes.db",nu
         }
         return noteList
     }
+    fun updateDate(note : Note){
+        val contentValues = ContentValues()
+        contentValues.put("Title", note.Title)
+        contentValues.put("Content", note.Content)
+        contentValues.put("Category", note.Category)
+        databaseSQLite.update("note",contentValues, "pk = ${note.pk}", null)
+    }
+    fun deleteNote(note : Note){
+        databaseSQLite.delete("note","pk = ${note.pk}", null)
+    }
 
 }

@@ -65,7 +65,7 @@
         </LinearLayout>
 
         <EditText
-            android:id="@+id/tvTitle"
+            android:id="@+id/etTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
@@ -73,7 +73,7 @@
             android:hint="@string/title" />
 
         <EditText
-            android:id="@+id/tvContent"
+            android:id="@+id/etContent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
