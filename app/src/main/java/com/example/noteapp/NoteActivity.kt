@@ -1,19 +1,26 @@
 package com.example.noteapp
 
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import com.example.noteapp.DB.DatabaseHelper
+import com.example.noteapp.DB.Note
+import com.example.noteapp.DB.NoteDatabase
 import com.example.noteapp.databinding.ActivityNoteBinding
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.launch
 
 class NoteActivity : AppCompatActivity() {
     lateinit var binding: ActivityNoteBinding
     private val dbHelper by lazy { DatabaseHelper(applicationContext) }
+    private val noteDao by lazy { NoteDatabase.getDatabase(this).NoteDao() }
     var category = "All"
     var isNoteSelected: Note? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityNoteBinding.inflate(layoutInflater)
@@ -22,20 +29,12 @@ class NoteActivity : AppCompatActivity() {
         val toolbar = binding.toolbarNote as Toolbar
         setSupportActionBar(toolbar)
 
-        val categoryList = arrayListOf("Home", "Work")
-        val adpterArray = ArrayAdapter(this, R.layout.dropdwon_item, categoryList)
-        binding.listCatgory.setAdapter(adpterArray)
-        binding.listCatgory.setOnItemClickListener { _, _, i, _ ->
-            category = categoryNote(i)
-        }
-
         isNoteSelected = intent.extras?.getSerializable("Note") as? Note
-        Log.e("is select create",isNoteSelected?.pk.toString())
+
     }
 
-    override fun onResume() {
-        super.onResume()
-        Log.e("is select resume",isNoteSelected?.pk.toString())
+    override fun onStart() {
+        super.onStart()
         if (isNoteSelected != null) {
             binding.etTitle.setText(isNoteSelected?.Title)
             binding.etContent.setText(isNoteSelected?.Content)
@@ -43,6 +42,18 @@ class NoteActivity : AppCompatActivity() {
             binding.listCatgory.setText(category)
 
         }
+    }
+    override fun onResume() {
+        super.onResume()
+        val categoryList = arrayListOf("Home", "Work")
+        val adpterArray = ArrayAdapter(this, R.layout.dropdwon_item, categoryList)
+        binding.listCatgory.setAdapter(adpterArray)
+        binding.listCatgory.setOnItemClickListener { _, _, i, _ ->
+            category = categoryNote(i)
+        }
+
+
+
     }
 
     private fun categoryNote(i: Int): String {
@@ -66,36 +77,36 @@ class NoteActivity : AppCompatActivity() {
                 else
                     addNote()
             }
-
-
         }
         return super.onOptionsItemSelected(item)
     }
 
     private fun addNote() {
+        var newNote: Note
         val title = binding.etTitle.text.toString()
         val content = binding.etContent.text.toString()
         if (title.isEmpty() && content.isEmpty()) {
             finish()
         } else if (title.isEmpty() && content.isNotEmpty()) {
-            val newNote = Note(
+            newNote = Note(
                 null, "", content, category
             )
-            dbHelper.saveData(newNote)
+
+            saveDB(newNote)
             finish()
 
         } else if (content.isEmpty() && title.isNotEmpty()) {
-            val newNote = Note(
+            newNote = Note(
                 null, title, "", category
             )
-            dbHelper.saveData(newNote)
+            saveDB(newNote)
             finish()
 
         } else {
-            val newNote = Note(
+            newNote = Note(
                 null, title, content, category
             )
-            dbHelper.saveData(newNote)
+            saveDB(newNote)
             finish()
         }
 
@@ -104,13 +115,24 @@ class NoteActivity : AppCompatActivity() {
     fun updateNote() {
         val title = binding.etTitle.text.toString()
         val content = binding.etContent.text.toString()
-        if (title.isEmpty() && content.isEmpty()){
-            dbHelper.deleteNote(isNoteSelected!!)
-        }
-        else{
-            val updateNote = Note(isNoteSelected?.pk ,title , content, category)
-            dbHelper.updateDate(updateNote)
+        if (title.isEmpty() && content.isEmpty()) {
+            CoroutineScope(IO).launch {
+                noteDao.deleteNote(isNoteSelected!!)
+            }
+            finish()
+        } else {
+            CoroutineScope(IO).launch {
+                val updateNote = Note(isNoteSelected?.pk, title, content, category)
+                noteDao.updateNote(updateNote)
+            }
             finish()
         }
     }
+
+    fun saveDB(newNote: Note) {
+        CoroutineScope(IO).launch {
+            noteDao.addNote(newNote)
+        }
+    }
+
 }
