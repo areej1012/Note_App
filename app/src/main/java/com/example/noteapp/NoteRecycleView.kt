@@ -2,17 +2,14 @@ package com.example.noteapp
 
 import android.content.Intent
 import android.os.Build
-import android.util.Log
 import android.view.*
 import androidx.annotation.RequiresApi
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.example.noteapp.DB.DatabaseHelper
 import com.example.noteapp.DB.Note
 import com.example.noteapp.DB.NoteDatabase
 import com.example.noteapp.databinding.CardCellBinding
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.launch
 import kotlin.random.Random
 
 class NoteRecycleView(private var notesList: ArrayList<Note>, var context: MainActivity) :
@@ -21,6 +18,7 @@ class NoteRecycleView(private var notesList: ArrayList<Note>, var context: MainA
 
     private val dbHelper by lazy { DatabaseHelper(context) }
     private val noteDao by lazy { NoteDatabase.getDatabase(context).NoteDao() }
+    private val viewModel by lazy { ViewModelProvider(context).get(MyViewModel::class.java) }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HolderItem {
         return HolderItem(
@@ -57,11 +55,9 @@ class NoteRecycleView(private var notesList: ArrayList<Note>, var context: MainA
         holder.binding.cardView.setOnCreateContextMenuListener { contextMenu, view, contextMenuInfo ->
             contextMenu.add("Delete")
             contextMenu.getItem(0).setOnMenuItemClickListener {
-                CoroutineScope(IO).launch {
-                    noteDao.deleteNote(notesList[position])
-                    notesList.removeAt(position)
-                }
-                notifyDataSetChanged()
+                viewModel.deleteNote(notesList[position])
+                notesList.removeAt(position)
+
                 return@setOnMenuItemClickListener true
 
             }

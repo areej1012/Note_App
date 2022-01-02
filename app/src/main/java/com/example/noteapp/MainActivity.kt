@@ -4,19 +4,16 @@ import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.isVisible
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.noteapp.DB.DatabaseHelper
 import com.example.noteapp.DB.Note
 import com.example.noteapp.DB.NoteDatabase
 import com.example.noteapp.databinding.ActivityMainBinding
-import kotlinx.coroutines.*
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.Dispatchers.Main
 
 class MainActivity : AppCompatActivity() {
     lateinit var binding: ActivityMainBinding
@@ -24,6 +21,7 @@ class MainActivity : AppCompatActivity() {
     private val noteDao by lazy { NoteDatabase.getDatabase(this).NoteDao() }
     lateinit var adapter: NoteRecycleView
     private val dbHelper by lazy { DatabaseHelper(applicationContext) }
+    private val viewModel by lazy { ViewModelProvider(this).get(MyViewModel::class.java) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,7 +42,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        readAllCategory()
+
 
     }
 
@@ -102,24 +100,19 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-     fun readAllCategory() {
-        CoroutineScope(IO).launch {
-            val data = async {
-                noteDao.getNote()
-            }.await()
-            if (data.isNotEmpty()){
-                notesList = data
-                withContext(Main){
-                    adapter.update(notesList)
-                    updateState(true)
-                }
-            }
-            else{
+    fun readAllCategory() {
+
+        viewModel.getNote().observe(this, { notes ->
+
+            if (!notes.isEmpty()) {
+                adapter.update(notes)
+                updateState(true)
+            } else
                 updateState(false)
-                Log.e("MainActivity", "Unable to get data", )
-            }
-        }
-         changeColorAllButton()
+
+        })
+
+        changeColorAllButton()
     }
 
     fun updateState(state: Boolean) {

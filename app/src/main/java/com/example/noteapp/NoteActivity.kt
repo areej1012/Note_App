@@ -6,18 +6,17 @@ import android.view.MenuItem
 import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.lifecycle.ViewModelProvider
 import com.example.noteapp.DB.DatabaseHelper
 import com.example.noteapp.DB.Note
 import com.example.noteapp.DB.NoteDatabase
 import com.example.noteapp.databinding.ActivityNoteBinding
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.launch
 
 class NoteActivity : AppCompatActivity() {
     lateinit var binding: ActivityNoteBinding
     private val dbHelper by lazy { DatabaseHelper(applicationContext) }
     private val noteDao by lazy { NoteDatabase.getDatabase(this).NoteDao() }
+    private val viewModel by lazy { ViewModelProvider(this).get(MyViewModel::class.java) }
     var category = "All"
     var isNoteSelected: Note? = null
 
@@ -43,6 +42,7 @@ class NoteActivity : AppCompatActivity() {
 
         }
     }
+
     override fun onResume() {
         super.onResume()
         val categoryList = arrayListOf("Home", "Work")
@@ -51,7 +51,6 @@ class NoteActivity : AppCompatActivity() {
         binding.listCatgory.setOnItemClickListener { _, _, i, _ ->
             category = categoryNote(i)
         }
-
 
 
     }
@@ -116,23 +115,18 @@ class NoteActivity : AppCompatActivity() {
         val title = binding.etTitle.text.toString()
         val content = binding.etContent.text.toString()
         if (title.isEmpty() && content.isEmpty()) {
-            CoroutineScope(IO).launch {
-                noteDao.deleteNote(isNoteSelected!!)
-            }
+            viewModel.deleteNote(isNoteSelected!!)
             finish()
         } else {
-            CoroutineScope(IO).launch {
-                val updateNote = Note(isNoteSelected?.pk, title, content, category)
-                noteDao.updateNote(updateNote)
-            }
+            val updateNote = Note(isNoteSelected?.pk, title, content, category)
+            viewModel.updateNote(updateNote)
             finish()
         }
     }
 
     fun saveDB(newNote: Note) {
-        CoroutineScope(IO).launch {
-            noteDao.addNote(newNote)
-        }
+        viewModel.saveDB(newNote)
+        finish()
     }
 
 }
