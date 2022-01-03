@@ -1,6 +1,7 @@
 package com.example.noteapp
 
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.ArrayAdapter
@@ -11,6 +12,10 @@ import com.example.noteapp.DB.DatabaseHelper
 import com.example.noteapp.DB.Note
 import com.example.noteapp.DB.NoteDatabase
 import com.example.noteapp.databinding.ActivityNoteBinding
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
+import java.util.*
+import kotlin.random.Random
 
 class NoteActivity : AppCompatActivity() {
     lateinit var binding: ActivityNoteBinding
@@ -18,8 +23,9 @@ class NoteActivity : AppCompatActivity() {
     private val noteDao by lazy { NoteDatabase.getDatabase(this).NoteDao() }
     private val viewModel by lazy { ViewModelProvider(this).get(MyViewModel::class.java) }
     var category = "All"
-    var isNoteSelected: Note? = null
-
+    var isNoteSelected: Notes? = null
+    val db = Firebase.firestore
+    val TAG : String = "NoteActivity"
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityNoteBinding.inflate(layoutInflater)
@@ -28,7 +34,7 @@ class NoteActivity : AppCompatActivity() {
         val toolbar = binding.toolbarNote as Toolbar
         setSupportActionBar(toolbar)
 
-        isNoteSelected = intent.extras?.getSerializable("Note") as? Note
+        isNoteSelected = intent.extras?.getSerializable("Note") as? Notes
 
     }
 
@@ -37,7 +43,7 @@ class NoteActivity : AppCompatActivity() {
         if (isNoteSelected != null) {
             binding.etTitle.setText(isNoteSelected?.Title)
             binding.etContent.setText(isNoteSelected?.Content)
-            category = isNoteSelected!!.Category
+            category = isNoteSelected!!.Category!!
             binding.listCatgory.setText(category)
 
         }
@@ -81,29 +87,30 @@ class NoteActivity : AppCompatActivity() {
     }
 
     private fun addNote() {
-        var newNote: Note
+        var newNote: Notes
+        val random = UUID.randomUUID().toString()
         val title = binding.etTitle.text.toString()
         val content = binding.etContent.text.toString()
         if (title.isEmpty() && content.isEmpty()) {
             finish()
         } else if (title.isEmpty() && content.isNotEmpty()) {
-            newNote = Note(
-                null, "", content, category
+            newNote = Notes(
+                random, "", content, category
             )
 
             saveDB(newNote)
             finish()
 
         } else if (content.isEmpty() && title.isNotEmpty()) {
-            newNote = Note(
-                null, title, "", category
+            newNote = Notes(
+                random, title, "", category
             )
             saveDB(newNote)
             finish()
 
         } else {
-            newNote = Note(
-                null, title, content, category
+            newNote = Notes(
+                random, title, content, category
             )
             saveDB(newNote)
             finish()
@@ -114,19 +121,32 @@ class NoteActivity : AppCompatActivity() {
     fun updateNote() {
         val title = binding.etTitle.text.toString()
         val content = binding.etContent.text.toString()
+
         if (title.isEmpty() && content.isEmpty()) {
-            viewModel.deleteNote(isNoteSelected!!)
+            db.collection("Notes")
+                .document(isNoteSelected?.pk!!)
+                .delete()
             finish()
         } else {
-            val updateNote = Note(isNoteSelected?.pk, title, content, category)
-            viewModel.updateNote(updateNote)
+            val updateNote = Notes(isNoteSelected?.pk, title, content, category)
+            db.collection("Notes")
+                .document(isNoteSelected?.pk!!)
+                .set(updateNote)
             finish()
         }
     }
 
-    fun saveDB(newNote: Note) {
-        viewModel.saveDB(newNote)
-        finish()
+    fun saveDB(newNote: Notes) {
+        db.collection("Notes")
+            .document(newNote.pk!!)
+            .set(newNote)
+            .addOnSuccessListener { doc ->
+
+            }
+            .addOnFailureListener{ e ->
+                Log.e(TAG,e.localizedMessage)
+            }
+
     }
 
 }

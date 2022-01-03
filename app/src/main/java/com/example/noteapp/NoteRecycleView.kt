@@ -10,15 +10,18 @@ import com.example.noteapp.DB.DatabaseHelper
 import com.example.noteapp.DB.Note
 import com.example.noteapp.DB.NoteDatabase
 import com.example.noteapp.databinding.CardCellBinding
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import kotlin.random.Random
 
-class NoteRecycleView(private var notesList: ArrayList<Note>, var context: MainActivity) :
+class NoteRecycleView(private var notesList: ArrayList<Notes>, var context: MainActivity) :
     RecyclerView.Adapter<NoteRecycleView.HolderItem>() {
     class HolderItem(val binding: CardCellBinding) : RecyclerView.ViewHolder(binding.root)
 
     private val dbHelper by lazy { DatabaseHelper(context) }
     private val noteDao by lazy { NoteDatabase.getDatabase(context).NoteDao() }
     private val viewModel by lazy { ViewModelProvider(context).get(MyViewModel::class.java) }
+    private val db = Firebase.firestore
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HolderItem {
         return HolderItem(
@@ -55,9 +58,10 @@ class NoteRecycleView(private var notesList: ArrayList<Note>, var context: MainA
         holder.binding.cardView.setOnCreateContextMenuListener { contextMenu, view, contextMenuInfo ->
             contextMenu.add("Delete")
             contextMenu.getItem(0).setOnMenuItemClickListener {
-                viewModel.deleteNote(notesList[position])
+                db.collection("Notes")
+                    .document(notesList[position].pk!!)
+                    .delete()
                 notesList.removeAt(position)
-
                 return@setOnMenuItemClickListener true
 
             }
@@ -66,8 +70,8 @@ class NoteRecycleView(private var notesList: ArrayList<Note>, var context: MainA
 
     override fun getItemCount(): Int = notesList.size
 
-    fun update(newList: List<Note>) {
-        notesList = newList as ArrayList<Note>
+    fun update(newList: List<Notes>) {
+        notesList = newList as ArrayList<Notes>
         notifyDataSetChanged()
     }
 
