@@ -1,4 +1,4 @@
-package com.example.noteapp
+package com.example.noteapp.Firestore
 
 import androidx.room.PrimaryKey
 import java.io.Serializable

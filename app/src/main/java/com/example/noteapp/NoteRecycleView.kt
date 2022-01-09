@@ -1,26 +1,30 @@
 package com.example.noteapp
 
+import android.content.Context
 import android.content.Intent
 import android.os.Build
+import android.util.Log
 import android.view.*
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.example.noteapp.DB.DatabaseHelper
-import com.example.noteapp.DB.Note
+import com.example.noteapp.DB.MyViewModel
 import com.example.noteapp.DB.NoteDatabase
+import com.example.noteapp.Firestore.FirestoreViewModel
+import com.example.noteapp.Firestore.Notes
 import com.example.noteapp.databinding.CardCellBinding
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlin.random.Random
 
-class NoteRecycleView(private var notesList: ArrayList<Notes>, var context: MainActivity) :
+class NoteRecycleView(private var notesList: ArrayList<Notes>, var context: Context) :
     RecyclerView.Adapter<NoteRecycleView.HolderItem>() {
     class HolderItem(val binding: CardCellBinding) : RecyclerView.ViewHolder(binding.root)
 
     private val dbHelper by lazy { DatabaseHelper(context) }
     private val noteDao by lazy { NoteDatabase.getDatabase(context).NoteDao() }
-    private val viewModel by lazy { ViewModelProvider(context).get(MyViewModel::class.java) }
+  //  private val viewModel by lazy { ViewModelProvider(context).get(FirestoreViewModel::class.java) }
     private val db = Firebase.firestore
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HolderItem {
@@ -51,6 +55,7 @@ class NoteRecycleView(private var notesList: ArrayList<Notes>, var context: Main
         holder.binding.cardView.setOnClickListener {
             val intent = Intent(context, NoteActivity::class.java)
             intent.putExtra("Note", notesList[position])
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             context.startActivity(intent)
         }
 
@@ -58,9 +63,9 @@ class NoteRecycleView(private var notesList: ArrayList<Notes>, var context: Main
         holder.binding.cardView.setOnCreateContextMenuListener { contextMenu, view, contextMenuInfo ->
             contextMenu.add("Delete")
             contextMenu.getItem(0).setOnMenuItemClickListener {
-                db.collection("Notes")
-                    .document(notesList[position].pk!!)
-                    .delete()
+            db.collection("Notes")
+                .document(notesList[position].pk!!)
+                .delete()
                 notesList.removeAt(position)
                 return@setOnMenuItemClickListener true
 
@@ -73,6 +78,9 @@ class NoteRecycleView(private var notesList: ArrayList<Notes>, var context: Main
     fun update(newList: List<Notes>) {
         notesList = newList as ArrayList<Notes>
         notifyDataSetChanged()
+        for (notes in notesList){
+            Log.e("title R", notes.Title.toString())
+        }
     }
 
     fun getRandomColor(): Int {

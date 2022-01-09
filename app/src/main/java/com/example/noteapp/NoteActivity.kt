@@ -9,19 +9,20 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.ViewModelProvider
 import com.example.noteapp.DB.DatabaseHelper
-import com.example.noteapp.DB.Note
+import com.example.noteapp.DB.MyViewModel
 import com.example.noteapp.DB.NoteDatabase
+import com.example.noteapp.Firestore.FirestoreViewModel
+import com.example.noteapp.Firestore.Notes
 import com.example.noteapp.databinding.ActivityNoteBinding
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import java.util.*
-import kotlin.random.Random
 
 class NoteActivity : AppCompatActivity() {
     lateinit var binding: ActivityNoteBinding
     private val dbHelper by lazy { DatabaseHelper(applicationContext) }
     private val noteDao by lazy { NoteDatabase.getDatabase(this).NoteDao() }
-    private val viewModel by lazy { ViewModelProvider(this).get(MyViewModel::class.java) }
+    private val viewModel by lazy { ViewModelProvider(this).get(FirestoreViewModel::class.java) }
     var category = "All"
     var isNoteSelected: Notes? = null
     val db = Firebase.firestore
@@ -137,15 +138,7 @@ class NoteActivity : AppCompatActivity() {
     }
 
     fun saveDB(newNote: Notes) {
-        db.collection("Notes")
-            .document(newNote.pk!!)
-            .set(newNote)
-            .addOnSuccessListener { doc ->
-
-            }
-            .addOnFailureListener{ e ->
-                Log.e(TAG,e.localizedMessage)
-            }
+       viewModel.addNote(newNote)
 
     }
 
